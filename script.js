@@ -9,20 +9,80 @@ const slideshowElement = document.getElementById("slideshow");
 // スライドショーの画像URLの配列
 const photoUrls = [];
 
+// GoogleフォトAPIのURL
+const googlePhotosApiUrl = "https://photoslibrary.googleapis.com/v1";
+
 // 写真をアップロードする関数
 function uploadPhoto() {
   const photoInput = document.getElementById("photoInput");
-  const file = photoInput.files[0];
+  const files = photoInput.files;
 
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const photoUrl = event.target.result;
+  if (files.length > 0) {
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const photoDataUrl = event.target.result;
+        uploadPhotoToGooglePhotos(photoDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+// Googleフォトに写真をアップロードする関数
+function uploadPhotoToGooglePhotos(photoDataUrl) {
+  const token = getTokenFromLocalStorage(); // ローカルストレージからトークンを取得する処理を追加してください
+
+  fetch(`${googlePhotosApiUrl}/uploads`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-type": "application/octet-stream",
+      "X-Goog-Upload-File-Name": "photo.jpg",
+      "X-Goog-Upload-Protocol": "raw",
+    },
+    body: photoDataUrl,
+  })
+    .then(response => response.json())
+    .then(uploadToken => {
+      createMediaItem(uploadToken);
+    })
+    .catch(error => {
+      console.error("Error uploading photo:", error);
+    });
+}
+
+// アップロードした写真をGoogleフォトに登録する関数
+function createMediaItem(uploadToken) {
+  const token = getTokenFromLocalStorage(); // ローカルストレージからトークンを取得する処理を追加してください
+
+  const requestBody = {
+    newMediaItems: [
+      {
+        simpleMediaItem: {
+          uploadToken: uploadToken,
+        },
+      },
+    ],
+  };
+
+  fetch(`${googlePhotosApiUrl}/mediaItems:batchCreate`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then(response => response.json())
+    .then(data => {
+      const photoUrl = data.newMediaItemResults[0].mediaItem.productUrl;
       photoUrls.push(photoUrl);
       showSlideshow();
-    };
-    reader.readAsDataURL(file);
-  }
+    })
+    .catch(error => {
+      console.error("Error creating media item:", error);
+    });
 }
 
 // スライドショーを表示する関数
