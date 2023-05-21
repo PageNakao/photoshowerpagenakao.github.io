@@ -1,8 +1,8 @@
 // Google Photos APIのクライアントIDとクライアントシークレット
-const CLIENT_ID = "666930798185-ruo9o41icdghbp1hcf6rlt0rrianlj23.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
+const CLIENT_ID = "666930798185-jvgutuj2ikd8t0dpkee0b3u2565acv8h.apps.googleusercontent.com";
+const CLIENT_SECRET = "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";
 // リダイレクトURI（Google API Consoleで設定したものと一致させる）
-const REDIRECT_URI = "YOUR_REDIRECT_URI";
+const REDIRECT_URI = "https://pagenakao.github.io/photoshowerpagenakao.github.io/";
 
 // 認証用URL
 const AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/photoslibrary.readonly`;
