@@ -65,9 +65,6 @@ const slideshowElement = document.getElementById("slideshow");
 // スライドショーの画像URLの配列
 const photoUrls = [];
 
-// GoogleフォトAPIのURL
-const googlePhotosApiUrl = "https://photoslibrary.googleapis.com/v1";
-
 // 写真をアップロードする関数
 function uploadPhoto() {
   const photoInput = document.getElementById("photoInput");
@@ -89,7 +86,7 @@ function uploadPhoto() {
 function uploadPhotoToGooglePhotos(photoDataUrl) {
   const token = getTokenFromLocalStorage(); // ローカルストレージからトークンを取得する処理を追加してください
 
-  fetch(`${googlePhotosApiUrl}/uploads`, {
+  fetch("https://photoslibrary.googleapis.com/v1/uploads", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -99,7 +96,7 @@ function uploadPhotoToGooglePhotos(photoDataUrl) {
     },
     body: photoDataUrl,
   })
-    .then(response => response.json())
+    .then(response => response.text())
     .then(uploadToken => {
       createMediaItem(uploadToken);
     })
@@ -122,7 +119,7 @@ function createMediaItem(uploadToken) {
     ],
   };
 
-  fetch(`${googlePhotosApiUrl}/mediaItems:batchCreate`, {
+  fetch("https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -147,4 +144,14 @@ function showSlideshow() {
   const slideshowHtml = photoUrls.map(photoUrl => `<img src="${photoUrl}">`).join("");
   // スライドショーコンテナにHTMLを設定
   slideshowElement.innerHTML = slideshowHtml;
+}
+
+// ローカルストレージにトークンを保存する関数
+function saveTokenToLocalStorage(token) {
+  localStorage.setItem("accessToken", token);
+}
+
+// ローカルストレージからトークンを取得する関数
+function getTokenFromLocalStorage() {
+  return localStorage.getItem("accessToken");
 }
