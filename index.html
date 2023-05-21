@@ -14,15 +14,16 @@
       border: none;
       cursor: pointer;
       border-radius: 5px;
+      width: 200px;
     }
 
     .select-btn {
-      background-color: #4CAF50;
+      background-color: green;
       color: white;
     }
 
     .upload-btn {
-      background-color: #4285f4;
+      background-color: blue;
       color: white;
     }
 
@@ -43,8 +44,10 @@
 </head>
 <body>
   <div class="upload-container">
-    <input type="file" id="photoInput" accept="image/*">
-    <button class="upload-btn select-btn" onclick="uploadPhoto()">Select Your Photo</button>
+    <label for="photoInput">
+      <input type="file" id="photoInput" accept="image/*" style="display: none;">
+      <button class="upload-btn select-btn" onclick="document.getElementById('photoInput').click()">Select Your Photo</button>
+    </label>
   </div>
   <div id="slideshow"></div>
 
