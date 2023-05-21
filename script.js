@@ -13,8 +13,8 @@ function uploadPhoto() {
     for (const file of files) {
       const reader = new FileReader();
       reader.onload = function(event) {
-        const photoDataUrl = event.target.result;
-        photoUrls.push(photoDataUrl);
+        const photoUrl = event.target.result;
+        photoUrls.push(photoUrl);
         showSlideshow();
       };
       reader.readAsDataURL(file);
