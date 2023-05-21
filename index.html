@@ -2,16 +2,41 @@
 <html>
 <head>
   <title>Photo Slideshow</title>
-　　　　<link rel="stylesheet" href="style.css">
+  <style>
+    .upload-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .upload-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .upload-btn:hover {
+      background-color: #45a049;
+    }
+
+    #slideshow {
+      text-align: center;
+    }
+
+    #slideshow img {
+      max-width: 100%;
+      height: auto;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Photo Slideshow</h1>
-
-  <label for="photoInput">Select your photo:</label>
-  <input type="file" id="photoInput" accept="image/*">
-  <button onclick="uploadPhoto()">Upload your photo</button>
-  
-  <h2>Slideshow</h2>
+  <div class="upload-container">
+    <input type="file" id="photoInput" accept="image/*">
+    <button class="upload-btn" onclick="uploadPhoto()">Select Your Photo</button>
+  </div>
   <div id="slideshow"></div>
 
   <script src="script.js"></script>
