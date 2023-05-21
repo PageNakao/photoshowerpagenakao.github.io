@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Photo Slideshow</title>
+  <title>Photo Slideshow</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Welcome to My Photo Slideshow</h1>
+  <input type="file" id="photoInput" accept="image/*">
+  <button onclick="uploadPhoto()">写真をアップロードする</button>
   <div id="slideshow"></div>
 
-  <script>
-    const slideshowElement = document.getElementById("slideshow");
-    slideshowElement.innerHTML = "<h2>Loading photos...</h2>";
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
