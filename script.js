@@ -51,8 +51,13 @@ function getAccessToken(code) {
 function handleAuthCode(code) {
   getAccessToken(code)
     .then(accessToken => {
-      // アクセスト
-
+      saveTokenToLocalStorage(accessToken); // アクセストークンを保存する処理
+      // ここから写真のアップロードやスライドショー表示などの処理を続ける
+    })
+    .catch(error => {
+      console.error("Error handling auth code:", error);
+    });
+}
 
 // スライドショーコンテナの要素を取得
 const slideshowElement = document.getElementById("slideshow");
