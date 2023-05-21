@@ -66,48 +66,57 @@ const slideshowElement = document.getElementById("slideshow");
 const photoUrls = [];
 
 // 写真をアップロードする関数
-function uploadPhoto() {
+async function uploadPhoto() {
   const photoInput = document.getElementById("photoInput");
   const files = photoInput.files;
 
   if (files.length > 0) {
     for (const file of files) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const photoDataUrl = event.target.result;
-        uploadPhotoToGooglePhotos(photoDataUrl);
-      };
-      reader.readAsDataURL(file);
+      const photoData = await readFile(file);
+      const uploadToken = await uploadPhotoToGooglePhotos(photoData);
+      await createMediaItem(uploadToken);
     }
+
+    showSlideshow();
   }
 }
 
-// Googleフォトに写真をアップロードする関数
-function uploadPhotoToGooglePhotos(photoDataUrl) {
-  const token = getTokenFromLocalStorage(); // ローカルストレージからトークンを取得する処理を追加してください
-
-  fetch("https://photoslibrary.googleapis.com/v1/uploads", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-type": "application/octet-stream",
-      "X-Goog-Upload-File-Name": "photo.jpg",
-      "X-Goog-Upload-Protocol": "raw",
-    },
-    body: photoDataUrl,
-  })
-    .then(response => response.text())
-    .then(uploadToken => {
-      createMediaItem(uploadToken);
-    })
-    .catch(error => {
-      console.error("Error uploading photo:", error);
-    });
+// ファイルを読み込む関数
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => {
+      resolve(event.target.result);
+    };
+    reader.onerror = error => {
+      reject(error);
+    };
+    reader.readAsBinaryString(file);
+  });
 }
 
-// アップロードした写真をGoogleフォトに登録する関数
-function createMediaItem(uploadToken) {
-  const token = getTokenFromLocalStorage(); // ローカルストレージからトークンを取得する処理を追加してください
+// Google フォトに写真をアップロードする関数
+async function uploadPhotoToGooglePhotos(photoData) {
+  const token = getTokenFromLocalStorage();
+
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/octet-stream");
+  headers.append("X-Goog-Upload-File-Name", "photo.jpg");
+  headers.append("X-Goog-Upload-Protocol", "raw");
+
+  const response = await fetch("https://photoslibrary.googleapis.com/v1/uploads", {
+    method: "POST",
+    headers: headers,
+    body: photoData,
+  });
+
+  return await response.text();
+}
+
+// アップロードした写真を Google フォトに登録する関数
+async function createMediaItem(uploadToken) {
+  const token = getTokenFromLocalStorage();
 
   const requestBody = {
     newMediaItems: [
@@ -119,30 +128,23 @@ function createMediaItem(uploadToken) {
     ],
   };
 
-  fetch("https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate", {
+  const response = await fetch("https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-type": "application/json",
     },
     body: JSON.stringify(requestBody),
-  })
-    .then(response => response.json())
-    .then(data => {
-      const photoUrl = data.newMediaItemResults[0].mediaItem.productUrl;
-      photoUrls.push(photoUrl);
-      showSlideshow();
-    })
-    .catch(error => {
-      console.error("Error creating media item:", error);
-    });
+  });
+
+  const data = await response.json();
+  const photoUrl = data.newMediaItemResults[0].mediaItem.productUrl;
+  photoUrls.push(photoUrl);
 }
 
 // スライドショーを表示する関数
 function showSlideshow() {
-  // スライドショーのHTMLを生成
   const slideshowHtml = photoUrls.map(photoUrl => `<img src="${photoUrl}">`).join("");
-  // スライドショーコンテナにHTMLを設定
   slideshowElement.innerHTML = slideshowHtml;
 }
 
