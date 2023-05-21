@@ -9,16 +9,25 @@
     }
 
     .upload-btn {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
       border: none;
       cursor: pointer;
-      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    .select-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .upload-btn {
+      background-color: #4285f4;
+      color: white;
     }
 
     .upload-btn:hover {
-      background-color: #45a049;
+      opacity: 0.8;
     }
 
     #slideshow {
@@ -35,7 +44,7 @@
 <body>
   <div class="upload-container">
     <input type="file" id="photoInput" accept="image/*">
-    <button class="upload-btn" onclick="uploadPhoto()">Select Your Photo</button>
+    <button class="upload-btn select-btn" onclick="uploadPhoto()">Select Your Photo</button>
   </div>
   <div id="slideshow"></div>
 
