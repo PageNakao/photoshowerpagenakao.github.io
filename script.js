@@ -157,3 +157,4 @@ function saveTokenToLocalStorage(token) {
 function getTokenFromLocalStorage() {
   return localStorage.getItem("accessToken");
 }
+
