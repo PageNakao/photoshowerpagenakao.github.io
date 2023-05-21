@@ -53,5 +53,47 @@
   <div id="slideshow"></div>
 
   <script src="script.js"></script>
+  <script>
+    // スライドショーコンテナの要素を取得
+    const slideshowElement = document.getElementById("slideshow");
+
+    // スライドショーの画像URLの配列
+    const photoUrls = [];
+
+    // 写真を選択した際の処理
+    function handlePhotoSelect(event) {
+      const photoInput = event.target;
+      const files = photoInput.files;
+
+      if (files.length > 0) {
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const photoDataUrl = event.target.result;
+            uploadPhotoToSlideshow(photoDataUrl);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+
+    // 写真をスライドショーに追加する関数
+    function uploadPhotoToSlideshow(photoDataUrl) {
+      photoUrls.push(photoDataUrl);
+      showSlideshow();
+    }
+
+    // スライドショーを表示する関数
+    function showSlideshow() {
+      // スライドショーのHTMLを生成
+      let slideshowHtml = "";
+      for (const photoUrl of photoUrls) {
+        slideshowHtml += `<img src="${photoUrl}" alt="Slideshow Photo">`;
+      }
+
+      // スライドショーコンテナにHTMLを設定
+      slideshowElement.innerHTML = slideshowHtml;
+    }
+  </script>
 </body>
 </html>
