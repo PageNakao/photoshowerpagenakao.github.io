@@ -45,9 +45,10 @@
 <body>
   <div class="upload-container">
     <label for="photoInput">
-      <input type="file" id="photoInput" accept="image/*" style="display: none;">
+      <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event)">
       <button class="upload-btn select-btn" onclick="document.getElementById('photoInput').click()">写真を選択</button>
     </label>
+    <button class="upload-btn" onclick="uploadPhoto()">アップロードする</button>
   </div>
   <div id="slideshow"></div>
 
