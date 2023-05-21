@@ -1,56 +1,29 @@
-// Google Photos APIのクライアントIDとクライアントシークレット
-const CLIENT_ID = "666930798185-jvgutuj2ikd8t0dpkee0b3u2565acv8h.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
-// リダイレクトURI（Google API Consoleで設定したものと一致させる）
-const REDIRECT_URI = "https://pagenakao.github.io/photoshowerpagenakao.github.io/";
-
-// 認証用URL
-const AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/photoslibrary.readonly`;
-
-// フォトシャワーの要素
+// スライドショーコンテナの要素を取得
 const slideshowElement = document.getElementById("slideshow");
 
-// Google Photos APIの初期化と認証
-function init() {
-  gapi.load("client:auth2", () => {
-    gapi.client.init({
-      clientId: CLIENT_ID,
-      discoveryDocs: ["https://photoslibrary.googleapis.com/$discovery/rest?version=v1"],
-      scope: "https://www.googleapis.com/auth/photoslibrary.readonly",
-    }).then(() => {
-      // 認証状態を確認
-      if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        // 未認証なら認証ページにリダイレクト
-        window.location.href = AUTH_URL;
-      } else {
-        // 認証済みなら写真の取得を開始
-        fetchPhotos();
-      }
-    });
-  });
+// スライドショーの画像URLの配列
+const photoUrls = [];
+
+// 写真をアップロードする関数
+function uploadPhoto() {
+  const photoInput = document.getElementById("photoInput");
+  const file = photoInput.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const photoUrl = event.target.result;
+      photoUrls.push(photoUrl);
+      showSlideshow();
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
-// 写真を取得してフォトシャワーに追加
-function fetchPhotos() {
-  gapi.client.photoslibrary.albums.list({
-    pageSize: 50,
-  }).then((response) => {
-    const albums = response.result.albums;
-    albums.forEach((album) => {
-      gapi.client.photoslibrary.mediaItems.search({
-        albumId: album.id,
-        pageSize: 10,
-      }).then((response) => {
-        const mediaItems = response.result.mediaItems;
-        mediaItems.forEach((mediaItem) => {
-          const imgElement = document.createElement("img");
-          imgElement.src = mediaItem.baseUrl;
-          slideshowElement.appendChild(imgElement);
-        });
-      });
-    });
-  });
+// スライドショーを表示する関数
+function showSlideshow() {
+  // スライドショーのHTMLを生成
+  const slideshowHtml = photoUrls.map(photoUrl => `<img src="${photoUrl}">`).join("");
+  // スライドショーコンテナにHTMLを設定
+  slideshowElement.innerHTML = slideshowHtml;
 }
-
-// ページ読み込み時に初期化を行う
-window.onload = init;
