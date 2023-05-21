@@ -1,3 +1,8 @@
+// CLIENT_ID、CLIENT_SECRET、REDIRECT_URI を差し込む
+const CLIENT_ID = "666930798185-jvgutuj2ikd8t0dpkee0b3u2565acv8h.apps.googleusercontent.com";
+const CLIENT_SECRET = "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";
+const REDIRECT_URI = "https://pagenakao.github.io/photoshowerpagenakao.github.io/";
+
 // スライドショーコンテナの要素を取得
 const slideshowElement = document.getElementById("slideshow");
 
